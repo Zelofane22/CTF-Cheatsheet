@@ -1,0 +1,3 @@
+- *Steghide* : Un outil de stéganographie en ligne de commande qui peut extraire des données cachées dans des images et des fichiers audio.
+- *OpenStego* : Un outil de stéganographie avec une interface graphique pour extraire des données cachées.
+- *Foremost* : Un outil de récupération de fichiers qui peut également détecter des fichiers cachés.
