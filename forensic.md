@@ -19,7 +19,7 @@ extracte encripted zip
 # pcap file
 **filtrer les packets et extraire les données**
 ```
-tshark -r file.pacp -Y 'filter' -T field -e data
+tshark -r file.pcap -Y 'filter' -T field -e data
 ```
 
 # ps snoop

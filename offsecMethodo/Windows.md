@@ -9,7 +9,7 @@ Generates scf, url & lnk payloads to put onto a smb share. These force authentic
 python3 hashgrab.py $ip <output>
 ```
 ## liste les shares
-```
+```bash
 nxc smb $ip --shares
 ```
 ### with creds
